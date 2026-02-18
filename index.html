@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fila do Burger — Jogo de Espera</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: {
+              purple: '#A855F7',
+              cyan: '#22D3EE',
+              yellow: '#FACC15',
+              pink: '#F472B6',
+              dark: '#0F0F0F',
+              gray: '#1F1F1F'
+            }
+          },
+          fontFamily: {
+            display: ['Orbitron', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
+    
+    html, body { height: 100%; margin: 0; }
+    
+    .glow-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3); }
+    .glow-cyan { box-shadow: 0 0 20px rgba(34, 211, 238, 0.5), 0 0 40px rgba(34, 211, 238, 0.3); }
+    .glow-yellow { box-shadow: 0 0 20px rgba(250, 204, 21, 0.5), 0 0 40px rgba(250, 204, 21, 0.3); }
+    .glow-pink { box-shadow: 0 0 20px rgba(244, 114, 182, 0.5), 0 0 40px rgba(244, 114, 182, 0.3); }
+    
+    .text-glow-purple { text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.5); }
+    .text-glow-cyan { text-shadow: 0 0 10px rgba(34, 211, 238, 0.8), 0 0 20px rgba(34, 211, 238, 0.5); }
+    .text-glow-yellow { text-shadow: 0 0 10px rgba(250, 204, 21, 0.8), 0 0 20px rgba(250, 204, 21, 0.5); }
+    
+    .shake { animation: shake 0.5s ease-in-out; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    .bounce-in { animation: bounceIn 0.4s ease-out; }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .slide-up { animation: slideUp 0.3s ease-out; }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8), 0 0 60px rgba(34, 211, 238, 0.4); }
+    }
+    
+    .gradient-border {
+      background: linear-gradient(135deg, #A855F7, #22D3EE, #FACC15);
+      padding: 2px;
+      border-radius: 1rem;
+    }
+    
+    .noise-bg {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+    
+    .ingredient-btn {
+      transition: all 0.2s ease;
+    }
+    .ingredient-btn:hover {
+      transform: translateY(-4px) scale(1.05);
+    }
+    .ingredient-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+    
+    .burger-layer {
+      transition: all 0.3s ease;
+    }
+    
+    .time-bar {
+      transition: width 0.1s linear;
+    }
+    
+    .modal-overlay {
+      backdrop-filter: blur(8px);
+    }
+    
+    .circuit-pattern {
+      background-image: 
+        linear-gradient(90deg, rgba(168, 85, 247, 0.1) 1px, transparent 1px),
+        linear-gradient(rgba(34, 211, 238, 0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+  </style>
+</head>
+<body class="h-full bg-neon-dark font-body text-white overflow-auto">
+  <div id="app" class="min-h-full w-full circuit-pattern noise-bg flex flex-col">
+    
+    <!-- TELA INICIAL -->
+    <div id="menu-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+      <!-- Logo SVG -->
+      <div class="mb-6 bounce-in">
+        <svg width="120" height="120" viewBox="0 0 120 120" class="drop-shadow-2xl">
+          <!-- Burger base -->
+          <ellipse cx="60" cy="95" rx="45" ry="12" fill="#8B4513" class="opacity-80"/>
+          <!-- Bottom bun -->
+          <path d="M15 85 Q15 75 60 75 Q105 75 105 85 L105 90 Q105 95 60 95 Q15 95 15 90 Z" fill="#D4A574"/>
+          <path d="M20 82 Q20 78 60 78 Q100 78 100 82" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6"/>
+          <!-- Lettuce -->
+          <path d="M12 75 Q30 65 60 70 Q90 65 108 75 Q90 72 60 77 Q30 72 12 75" fill="#22D3EE"/>
+          <!-- Cheese -->
+          <path d="M10 70 L20 60 L40 65 L60 58 L80 65 L100 60 L110 70 Q60 75 10 70" fill="#FACC15"/>
+          <!-- Patty -->
+          <ellipse cx="60" cy="55" rx="42" ry="10" fill="#5D3A1A"/>
+          <ellipse cx="60" cy="53" rx="40" ry="8" fill="#8B4513"/>
+          <!-- Top bun -->
+          <path d="M20 50 Q20 20 60 15 Q100 20 100 50 Q100 55 60 55 Q20 55 20 50" fill="#D4A574"/>
+          <path d="M25 45 Q25 25 60 20 Q95 25 95 45" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6"/>
+          <!-- Sesame seeds -->
+          <ellipse cx="40" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(-15 40 30)"/>
+          <ellipse cx="60" cy="25" rx="4" ry="2" fill="#FFF8DC"/>
+          <ellipse cx="80" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(15 80 30)"/>
+          <ellipse cx="50" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(-10 50 38)"/>
+          <ellipse cx="70" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(10 70 38)"/>
+          <!-- Neon glow effect -->
+          <ellipse cx="60" cy="55" rx="48" ry="45" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.3"/>
+        </svg>
+      </div>
+      
+      <h1 id="brand-title" class="font-display text-3xl sm:text-5xl font-black text-neon-purple text-glow-purple text-center mb-2">
+        NeonBurger Lab
+      </h1>
+      <p id="brand-tagline" class="text-neon-cyan text-lg sm:text-xl mb-8 text-center text-glow-cyan">
+        Jogue enquanto seu pedido chega!
+      </p>
+      
+      <div class="flex flex-col gap-4 w-full max-w-xs">
+        <button onclick="startGame()" class="gradient-border">
+          <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-xl text-neon-yellow hover:bg-neon-gray transition-all flex items-center justify-center gap-3">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            JOGAR
+          </div>
+        </button>
+        
+        <button onclick="showModal('how-to-play')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
+          COMO JOGAR
+        </button>
+        
+        <button onclick="showModal('settings')" class="bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 px-6 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all">
+          CONFIGURAÇÕES
+        </button>
+      </div>
+      
+      <div class="mt-8 text-center">
+        <p class="text-gray-500 text-sm">Recorde: <span id="menu-high-score" class="text-neon-yellow font-bold">0</span> pontos</p>
+      </div>
+    </div>
+    
+    <!-- TELA DO JOGO -->
+    <div id="game-screen" class="hidden flex-1 flex flex-col p-2 sm:p-4">
+      <!-- Header do jogo -->
+      <div class="flex justify-between items-center mb-3">
+        <div class="flex items-center gap-2">
+          <span class="font-display text-neon-purple text-sm sm:text-base">⏱️</span>
+          <span id="time-display" class="font-display text-xl sm:text-2xl text-neon-cyan font-bold">60</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-display text-neon-yellow text-sm sm:text-base">🏆</span>
+          <span id="score-display" class="font-display text-xl sm:text-2xl text-neon-yellow font-bold">0</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-neon-pink text-sm">🔥</span>
+          <span id="combo-display" class="font-display text-lg text-neon-pink font-bold">x0</span>
+        </div>
+      </div>
+      
+      <!-- Barra de tempo -->
+      <div class="w-full h-3 bg-neon-gray rounded-full overflow-hidden mb-4 border border-neon-purple/30">
+        <div id="time-bar" class="h-full bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-yellow time-bar rounded-full" style="width: 100%"></div>
+      </div>
+      
+      <!-- Pedido atual -->
+      <div class="gradient-border mb-4">
+        <div class="bg-neon-dark rounded-xl p-3 sm:p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-neon-yellow">📋</span>
+            <span class="font-display text-neon-yellow text-sm sm:text-base font-bold">PEDIDO:</span>
+          </div>
+          <p id="current-order" class="font-display text-white text-sm sm:text-lg text-center"></p>
+        </div>
+      </div>
+      
+      <!-- Área do burger montado -->
+      <div class="flex-1 flex items-center justify-center mb-4 min-h-[120px] sm:min-h-[180px]">
+        <div class="relative">
+          <div id="burger-stack" class="flex flex-col-reverse items-center gap-1">
+            <!-- Camadas do burger aparecem aqui -->
+          </div>
+          <div id="feedback-message" class="absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg opacity-0 transition-opacity whitespace-nowrap"></div>
+        </div>
+      </div>
+      
+      <!-- Ingredientes -->
+      <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
+        <!-- Ingredientes serão gerados dinamicamente -->
+      </div>
+      <div id="ingredients-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4"></div>
+      
+      <!-- Botões de ação -->
+      <div class="flex gap-2 justify-center flex-wrap">
+        <button onclick="undoLayer()" class="bg-neon-gray border border-neon-purple/50 rounded-lg py-2 px-3 sm:px-4 text-neon-purple text-xs sm:text-sm font-bold hover:bg-neon-purple hover:text-neon-dark transition-all flex items-center gap-1">
+          ↩️ Desfazer
+        </button>
+        <button onclick="clearBurger()" class="bg-neon-gray border border-neon-pink/50 rounded-lg py-2 px-3 sm:px-4 text-neon-pink text-xs sm:text-sm font-bold hover:bg-neon-pink hover:text-neon-dark transition-all flex items-center gap-1">
+          🗑️ Limpar
+        </button>
+        <button onclick="deliverOrder()" class="bg-neon-yellow text-neon-dark rounded-lg py-2 px-4 sm:px-6 text-sm sm:text-base font-display font-bold hover:glow-yellow transition-all flex items-center gap-1">
+          ✅ Entregar!
+        </button>
+      </div>
+    </div>
+    
+    <!-- Ticket lateral (pedidos concluídos) -->
+    <div id="ticket-panel" class="hidden fixed right-2 top-1/2 transform -translate-y-1/2 w-32 sm:w-40 bg-neon-gray/95 rounded-l-xl border-l-4 border-neon-cyan p-2 sm:p-3 z-10">
+      <p class="font-display text-neon-cyan text-xs sm:text-sm font-bold mb-2">📝 ÚLTIMOS:</p>
+      <div id="ticket-list" class="space-y-1 text-xs"></div>
+    </div>
+    
+    <!-- TELA DE RESULTADO -->
+    <div id="result-screen" class="hidden flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+      <div class="gradient-border mb-6 bounce-in">
+        <div class="bg-neon-dark rounded-2xl p-6 sm:p-8 text-center">
+          <h2 class="font-display text-2xl sm:text-4xl text-neon-yellow text-glow-yellow mb-4">⏰ TEMPO!</h2>
+          
+          <div class="mb-6">
+            <p class="text-gray-400 text-sm mb-1">Sua pontuação:</p>
+            <p id="final-score" class="font-display text-4xl sm:text-6xl text-neon-cyan font-black text-glow-cyan">0</p>
+          </div>
+          
+          <div class="mb-6">
+            <p class="text-gray-400 text-sm mb-1">Recorde:</p>
+            <p id="final-high-score" class="font-display text-2xl sm:text-3xl text-neon-yellow font-bold">0</p>
+          </div>
+          
+          <div id="new-record" class="hidden mb-4 text-neon-pink font-display text-lg animate-pulse">
+            🎉 NOVO RECORDE! 🎉
+          </div>
+          
+          <p id="result-message" class="text-white text-sm sm:text-base mb-6"></p>
+        </div>
+      </div>
+      
+      <div class="flex flex-col gap-3 w-full max-w-xs">
+        <button onclick="startGame()" class="gradient-border">
+          <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-lg text-neon-yellow hover:bg-neon-gray transition-all">
+            🔄 JOGAR DE NOVO
+          </div>
+        </button>
+        <button onclick="showScreen('menu')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
+          🏠 MENU
+        </button>
+      </div>
+    </div>
+    
+    <!-- MODAIS -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-black/80 modal-overlay z-50 flex items-center justify-center p-4">
+      <!-- Modal Como Jogar -->
+      <div id="how-to-play-modal" class="hidden gradient-border max-w-md w-full slide-up">
+        <div class="bg-neon-dark rounded-2xl p-6">
+          <h3 class="font-display text-2xl text-neon-cyan text-glow-cyan mb-4 text-center">🎮 COMO JOGAR</h3>
+          
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <span class="bg-neon-purple text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">1</span>
+              <p class="text-gray-300 text-sm">Veja o <span class="text-neon-yellow font-bold">PEDIDO</span> no topo da tela com os ingredientes necessários.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="bg-neon-cyan text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">2</span>
+              <p class="text-gray-300 text-sm">Clique nos <span class="text-neon-cyan font-bold">INGREDIENTES</span> na ordem correta para montar o burger.</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="bg-neon-yellow text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">3</span>
+              <p class="text-gray-300 text-sm">Clique em <span class="text-neon-yellow font-bold">ENTREGAR</span> quando terminar. Acertos dão +100 pontos!</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="bg-neon-pink text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">4</span>
+              <p class="text-gray-300 text-sm">Monte <span class="text-neon-pink font-bold">COMBOS</span> de 3+ acertos seguidos para bônus de +150!</p>
+            </div>
+          </div>
+          
+          <button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all">
+            ENTENDI! 👍
+          </button>
+        </div>
+      </div>
+      
+      <!-- Modal Configurações -->
+      <div id="settings-modal" class="hidden gradient-border max-w-md w-full slide-up">
+        <div class="bg-neon-dark rounded-2xl p-6">
+          <h3 class="font-display text-2xl text-neon-purple text-glow-purple mb-6 text-center">⚙️ CONFIGURAÇÕES</h3>
+          
+          <div class="space-y-6">
+            <!-- Som -->
+            <div class="flex items-center justify-between">
+              <span class="text-white font-bold">🔊 Som</span>
+              <button id="sound-toggle" onclick="toggleSound()" class="w-16 h-8 rounded-full bg-neon-gray border-2 border-neon-cyan relative transition-all">
+                <div id="sound-knob" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-neon-cyan transition-all"></div>
+              </button>
+            </div>
+            
+            <!-- Dificuldade -->
+            <div>
+              <p class="text-white font-bold mb-3">🎯 Dificuldade</p>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setDifficulty('easy')" id="diff-easy" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-cyan text-neon-dark">
+                  FÁCIL
+                </button>
+                <button onclick="setDifficulty('normal')" id="diff-normal" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-yellow border border-neon-yellow/50">
+                  NORMAL
+                </button>
+                <button onclick="setDifficulty('hard')" id="diff-hard" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-pink border border-neon-pink/50">
+                  DIFÍCIL
+                </button>
+              </div>
+              <p id="difficulty-desc" class="text-gray-500 text-xs mt-2 text-center">3 ingredientes • Sem penalidade de tempo</p>
+            </div>
+          </div>
+          
+          <button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-purple rounded-xl py-3 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
+            SALVAR ✓
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rodapé -->
+    <footer class="text-center py-4 text-gray-600 text-xs border-t border-neon-gray/50">
+      <span id="footer-brand">NeonBurger Lab</span> • Pedido fictício • Jogo de espera
+    </footer>
+  </div>
+
+  <script>
+    // ========================================
+    // CONFIGURAÇÃO E ESTADO DO JOGO
+    // ========================================
+    
+    const defaultConfig = {
+      brand_name: 'NeonBurger Lab',
+      tagline: 'Jogue enquanto seu pedido chega!'
+    };
+    
+    // Ingredientes disponíveis com suas cores e emojis
+    const INGREDIENTS = [
+      { id: 'pao-baixo', name: 'Pão ↓', color: '#D4A574', emoji: '🍞' },
+      { id: 'carne', name: 'Carne', color: '#8B4513', emoji: '🥩' },
+      { id: 'queijo', name: 'Queijo', color: '#FACC15', emoji: '🧀' },
+      { id: 'alface', name: 'Alface', color: '#22D3EE', emoji: '🥬' },
+      { id: 'tomate', name: 'Tomate', color: '#EF4444', emoji: '🍅' },
+      { id: 'bacon', name: 'Bacon', color: '#DC2626', emoji: '🥓' },
+      { id: 'cebola', name: 'Cebola', color: '#7C3AED', emoji: '🧅' },
+      { id: 'picles', name: 'Picles', color: '#22C55E', emoji: '🥒' },
+      { id: 'molho', name: 'Molho', color: '#F472B6', emoji: '🫗' },
+      { id: 'pao-cima', name: 'Pão ↑', color: '#D4A574', emoji: '🍔' }
+    ];
+    
+    // Configurações de dificuldade
+    const DIFFICULTY_SETTINGS = {
+      easy: { ingredients: 3, timePenalty: 0, autoSwapTime: null, description: '3 ingredientes • Sem penalidade de tempo' },
+      normal: { ingredients: 4, timePenalty: 2, autoSwapTime: null, description: '4 ingredientes • -2s por erro' },
+      hard: { ingredients: 5, timePenalty: 3, autoSwapTime: 15, description: '5 ingredientes • Troca automática a cada 15s' }
+    };
+    
+    // Frases do jogo
+    const PHRASES = {
+      success: ['Pedido perfeito! 🍔', 'Combo perfeito! GG!', 'Você é fera! Mais um!', 'Bora montar outro!', 'Entrega confirmada! 🔥'],
+      error: ['Ops, saiu errado!', 'Erro 404: fome não encontrada.', 'Tenta de novo!', 'Capricha no ponto!'],
+      combo: ['A fila tá andando!', '🔥 Combo x', 'Tá pegando fogo!'],
+      time: ['Tempo acabando... acelera!', 'Corre! ⏰', 'Vai que dá!']
+    };
+    
+    // Estado do jogo
+    let gameState = {
+      score: 0,
+      highScore: 0,
+      timeLeft: 60,
+      combo: 0,
+      currentOrder: [],
+      currentBurger: [],
+      completedOrders: [],
+      difficulty: 'easy',
+      soundEnabled: true,
+      gameInterval: null,
+      autoSwapInterval: null,
+      isPlaying: false
+    };
+    
+    // Audio context para sons
+    let audioContext = null;
+    
+    // Dados persistentes
+    let persistentData = null;
+    
+    // ========================================
+    // INICIALIZAÇÃO DOS SDKs
+    // ========================================
+    
+    const dataHandler = {
+      onDataChanged(data) {
+        if (data && data.length > 0) {
+          const record = data[0];
+          if (record.high_score !== undefined) {
+            gameState.highScore = record.high_score;
+            updateHighScoreDisplay();
+          }
+          persistentData = record;
+        }
+      }
+    };
+    
+    async function initSDKs() {
+      // Inicializar Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('brand-title').textContent = config.brand_name || defaultConfig.brand_name;
+            document.getElementById('brand-tagline').textContent = config.tagline || defaultConfig.tagline;
+            document.getElementById('footer-brand').textContent = config.brand_name || defaultConfig.brand_name;
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['brand_name', config.brand_name || defaultConfig.brand_name],
+            ['tagline', config.tagline || defaultConfig.tagline]
+          ])
+        });
+      }
+      
+      // Inicializar Data SDK
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Falha ao inicializar Data SDK');
+        }
+      }
+      
+      // Carregar high score do localStorage como fallback
+      const savedHighScore = localStorage.getItem('neonburger-highscore');
+      if (savedHighScore && !gameState.highScore) {
+        gameState.highScore = parseInt(savedHighScore) || 0;
+      }
+      updateHighScoreDisplay();
+    }
+    
+    // ========================================
+    // FUNÇÕES DE ÁUDIO
+    // ========================================
+    
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+    
+    function playSound(type) {
+      if (!gameState.soundEnabled) return;
+      
+      try {
+        initAudio();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        switch(type) {
+          case 'click':
+            oscillator.frequency.value = 800;
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.05);
+            break;
+          case 'success':
+            oscillator.frequency.value = 523;
+            gainNode.gain.value = 0.15;
+            oscillator.start();
+            setTimeout(() => { oscillator.frequency.value = 659; }, 100);
+            setTimeout(() => { oscillator.frequency.value = 784; }, 200);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            break;
+          case 'error':
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+            break;
+          case 'combo':
+            oscillator.frequency.value = 880;
+            oscillator.type = 'triangle';
+            gainNode.gain.value = 0.15;
+            oscillator.start();
+            setTimeout(() => { oscillator.frequency.value = 1047; }, 100);
+            oscillator.stop(audioContext.currentTime + 0.25);
+            break;
+          case 'gameOver':
+            oscillator.frequency.value = 440;
+            oscillator.type = 'sine';
+            gainNode.gain.value = 0.2;
+            oscillator.start();
+            setTimeout(() => { oscillator.frequency.value = 349; }, 200);
+            setTimeout(() => { oscillator.frequency.value = 294; }, 400);
+            oscillator.stop(audioContext.currentTime + 0.6);
+            break;
+        }
+      } catch (e) {
+        // Falha silenciosa se áudio não funcionar
+      }
+    }
+    
+    // ========================================
+    // FUNÇÕES DE NAVEGAÇÃO
+    // ========================================
+    
+    function showScreen(screenName) {
+      document.getElementById('menu-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('ticket-panel').classList.add('hidden');
+      
+      document.getElementById(`${screenName}-screen`).classList.remove('hidden');
+      
+      if (screenName === 'game') {
+        document.getElementById('ticket-panel').classList.remove('hidden');
+      }
+    }
+    
+    function showModal(modalName) {
+      document.getElementById('modal-overlay').classList.remove('hidden');
+      document.getElementById(`${modalName}-modal`).classList.remove('hidden');
+      playSound('click');
+    }
+    
+    function hideModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+      document.querySelectorAll('[id$="-modal"]').forEach(el => el.classList.add('hidden'));
+      playSound('click');
+    }
+    
+    // ========================================
+    // FUNÇÕES DE CONFIGURAÇÃO
+    // ========================================
+    
+    function toggleSound() {
+      gameState.soundEnabled = !gameState.soundEnabled;
+      const knob = document.getElementById('sound-knob');
+      const toggle = document.getElementById('sound-toggle');
+      
+      if (gameState.soundEnabled) {
+        knob.style.left = '1.75rem';
+        toggle.classList.add('border-neon-cyan');
+        toggle.classList.remove('border-gray-600');
+        knob.classList.add('bg-neon-cyan');
+        knob.classList.remove('bg-gray-600');
+      } else {
+        knob.style.left = '0.25rem';
+        toggle.classList.remove('border-neon-cyan');
+        toggle.classList.add('border-gray-600');
+        knob.classList.remove('bg-neon-cyan');
+        knob.classList.add('bg-gray-600');
+      }
+      playSound('click');
+    }
+    
+    function setDifficulty(level) {
+      gameState.difficulty = level;
+      
+      // Atualizar visual dos botões
+      ['easy', 'normal', 'hard'].forEach(d => {
+        const btn = document.getElementById(`diff-${d}`);
+        if (d === level) {
+          btn.classList.remove('bg-neon-gray', 'border');
+          btn.classList.add('bg-neon-cyan', 'text-neon-dark');
+        } else {
+          btn.classList.add('bg-neon-gray', 'border');
+          btn.classList.remove('bg-neon-cyan', 'text-neon-dark');
+        }
+      });
+      
+      // Atualizar descrição
+      document.getElementById('difficulty-desc').textContent = DIFFICULTY_SETTINGS[level].description;
+      playSound('click');
+    }
+    
+    function updateHighScoreDisplay() {
+      document.getElementById('menu-high-score').textContent = gameState.highScore;
+    }
+    
+    // ========================================
+    // FUNÇÕES DO JOGO
+    // ========================================
+    
+    function startGame() {
+      // Resetar estado
+      gameState.score = 0;
+      gameState.timeLeft = 60;
+      gameState.combo = 0;
+      gameState.currentBurger = [];
+      gameState.completedOrders = [];
+      gameState.isPlaying = true;
+      
+      // Atualizar UI
+      updateScoreDisplay();
+      updateTimeDisplay();
+      updateComboDisplay();
+      renderBurgerStack();
+      renderIngredients();
+      renderTicket();
+      
+      // Gerar primeiro pedido
+      generateNewOrder();
+      
+      // Mostrar tela do jogo
+      showScreen('game');
+      
+      // Iniciar timer
+      gameState.gameInterval = setInterval(gameTick, 1000);
+      
+      // Se dificuldade difícil, iniciar auto-swap
+      if (gameState.difficulty === 'hard') {
+        gameState.autoSwapInterval = setInterval(() => {
+          if (gameState.isPlaying) {
+            showFeedback('Pedido expirou!', false);
+            generateNewOrder();
+          }
+        }, DIFFICULTY_SETTINGS.hard.autoSwapTime * 1000);
+      }
+      
+      playSound('click');
+    }
+    
+    function gameTick() {
+      gameState.timeLeft--;
+      updateTimeDisplay();
+      
+      // Aviso de tempo
+      if (gameState.timeLeft === 10) {
+        showFeedback(PHRASES.time[Math.floor(Math.random() * PHRASES.time.length)], null);
+      }
+      
+      if (gameState.timeLeft <= 0) {
+        endGame();
+      }
+    }
+    
+    function endGame() {
+      gameState.isPlaying = false;
+      
+      // Parar intervalos
+      if (gameState.gameInterval) {
+        clearInterval(gameState.gameInterval);
+        gameState.gameInterval = null;
+      }
+      if (gameState.autoSwapInterval) {
+        clearInterval(gameState.autoSwapInterval);
+        gameState.autoSwapInterval = null;
+      }
+      
+      // Verificar novo recorde
+      const isNewRecord = gameState.score > gameState.highScore;
+      if (isNewRecord) {
+        gameState.highScore = gameState.score;
+        localStorage.setItem('neonburger-highscore', gameState.highScore);
+        
+        // Salvar no Data SDK
+        saveHighScore();
+      }
+      
+      // Atualizar tela de resultado
+      document.getElementById('final-score').textContent = gameState.score;
+      document.getElementById('final-high-score').textContent = gameState.highScore;
+      document.getElementById('new-record').classList.toggle('hidden', !isNewRecord);
+      
+      // Mensagem baseada na pontuação
+      let message = '';
+      if (gameState.score >= 1000) {
+        message = '🌟 Incrível! Você é um mestre dos burgers!';
+      } else if (gameState.score >= 500) {
+        message = '🔥 Muito bom! A cozinha pegou fogo!';
+      } else if (gameState.score >= 200) {
+        message = '👍 Bom trabalho! Continue praticando!';
+      } else {
+        message = '💪 Não desista! Tente novamente!';
+      }
+      document.getElementById('result-message').textContent = message;
+      
+      showScreen('result');
+      playSound('gameOver');
+    }
+    
+    async function saveHighScore() {
+      if (!window.dataSdk) return;
+      
+      const newData = {
+        high_score: gameState.highScore,
+        games_played: (persistentData?.games_played || 0) + 1,
+        last_played: new Date().toISOString()
+      };
+      
+      if (persistentData && persistentData.__backendId) {
+        await window.dataSdk.update({ ...persistentData, ...newData });
+      } else {
+        await window.dataSdk.create(newData);
+      }
+    }
+    
+    function generateNewOrder() {
+      const settings = DIFFICULTY_SETTINGS[gameState.difficulty];
+      const numIngredients = settings.ingredients;
+      
+      // Sempre começar com pão de baixo e terminar com pão de cima
+      const availableIngredients = INGREDIENTS.filter(i => 
+        i.id !== 'pao-baixo' && i.id !== 'pao-cima'
+      );
+      
+      // Selecionar ingredientes aleatórios
+      const shuffled = [...availableIngredients].sort(() => Math.random() - 0.5);
+      const middleIngredients = shuffled.slice(0, numIngredients - 2);
+      
+      gameState.currentOrder = [
+        INGREDIENTS.find(i => i.id === 'pao-baixo'),
+        ...middleIngredients,
+        INGREDIENTS.find(i => i.id === 'pao-cima')
+      ];
+      
+      // Limpar burger atual
+      gameState.currentBurger = [];
+      renderBurgerStack();
+      
+      // Atualizar display do pedido
+      const orderText = gameState.currentOrder.map(i => i.emoji + ' ' + i.name).join(' + ');
+      document.getElementById('current-order').textContent = orderText;
+    }
+    
+    function addIngredient(ingredientId) {
+      if (!gameState.isPlaying) return;
+      
+      const ingredient = INGREDIENTS.find(i => i.id === ingredientId);
+      if (!ingredient) return;
+      
+      gameState.currentBurger.push(ingredient);
+      renderBurgerStack();
+      playSound('click');
+    }
+    
+    function undoLayer() {
+      if (gameState.currentBurger.length > 0) {
+        gameState.currentBurger.pop();
+        renderBurgerStack();
+        playSound('click');
+      }
+    }
+    
+    function clearBurger() {
+      gameState.currentBurger = [];
+      renderBurgerStack();
+      playSound('click');
+    }
+    
+    function deliverOrder() {
+      if (!gameState.isPlaying) return;
+      
+      // Verificar se o pedido está correto
+      const isCorrect = checkOrder();
+      
+      if (isCorrect) {
+        // Pedido correto
+        gameState.score += 100;
+        gameState.combo++;
+        
+        // Verificar combo
+        if (gameState.combo >= 3 && gameState.combo % 3 === 0) {
+          gameState.score += 150;
+          showFeedback(`${PHRASES.combo[1]}${gameState.combo}! +150 🔥`, true);
+          playSound('combo');
+        } else {
+          showFeedback(PHRASES.success[Math.floor(Math.random() * PHRASES.success.length)], true);
+          playSound('success');
+        }
+        
+        // Adicionar ao ticket
+        addToTicket(true);
+      } else {
+        // Pedido errado
+        gameState.score = Math.max(0, gameState.score - 50);
+        gameState.combo = 0;
+        
+        // Penalidade de tempo
+        const timePenalty = DIFFICULTY_SETTINGS[gameState.difficulty].timePenalty;
+        gameState.timeLeft = Math.max(0, gameState.timeLeft - timePenalty);
+        
+        showFeedback(PHRASES.error[Math.floor(Math.random() * PHRASES.error.length)], false);
+        playSound('error');
+        
+        // Adicionar ao ticket
+        addToTicket(false);
+        
+        // Shake animation
+        document.getElementById('burger-stack').classList.add('shake');
+        setTimeout(() => {
+          document.getElementById('burger-stack').classList.remove('shake');
+        }, 500);
+      }
+      
+      updateScoreDisplay();
+      updateComboDisplay();
+      updateTimeDisplay();
+      
+      // Gerar novo pedido
+      generateNewOrder();
+    }
+    
+    function checkOrder() {
+      if (gameState.currentBurger.length !== gameState.currentOrder.length) {
+        return false;
+      }
+      
+      for (let i = 0; i < gameState.currentOrder.length; i++) {
+        if (gameState.currentBurger[i].id !== gameState.currentOrder[i].id) {
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    function addToTicket(success) {
+      const orderName = gameState.currentOrder.slice(1, -1).map(i => i.emoji).join('');
+      gameState.completedOrders.unshift({ name: orderName, success });
+      
+      // Manter apenas últimos 5
+      if (gameState.completedOrders.length > 5) {
+        gameState.completedOrders.pop();
+      }
+      
+      renderTicket();
+    }
+    
+    // ========================================
+    // FUNÇÕES DE RENDERIZAÇÃO
+    // ========================================
+    
+    function updateScoreDisplay() {
+      document.getElementById('score-display').textContent = gameState.score;
+    }
+    
+    function updateTimeDisplay() {
+      document.getElementById('time-display').textContent = gameState.timeLeft;
+      
+      const percentage = (gameState.timeLeft / 60) * 100;
+      document.getElementById('time-bar').style.width = `${percentage}%`;
+      
+      // Mudar cor quando tempo baixo
+      const timeBar = document.getElementById('time-bar');
+      if (gameState.timeLeft <= 10) {
+        timeBar.classList.remove('from-neon-purple', 'via-neon-cyan', 'to-neon-yellow');
+        timeBar.classList.add('from-red-500', 'to-red-700');
+      } else {
+        timeBar.classList.add('from-neon-purple', 'via-neon-cyan', 'to-neon-yellow');
+        timeBar.classList.remove('from-red-500', 'to-red-700');
+      }
+    }
+    
+    function updateComboDisplay() {
+      document.getElementById('combo-display').textContent = `x${gameState.combo}`;
+    }
+    
+    function renderBurgerStack() {
+      const stack = document.getElementById('burger-stack');
+      stack.innerHTML = '';
+      
+      if (gameState.currentBurger.length === 0) {
+        stack.innerHTML = '<div class="text-gray-500 text-sm font-display">Clique nos ingredientes!</div>';
+        return;
+      }
+      
+      gameState.currentBurger.forEach((ingredient, index) => {
+        const layer = document.createElement('div');
+        layer.className = 'burger-layer bounce-in';
+        layer.style.cssText = `
+          width: ${80 + index * 2}px;
+          height: ${ingredient.id.includes('pao') ? 20 : 12}px;
+          background-color: ${ingredient.color};
+          border-radius: ${ingredient.id.includes('pao') ? '50%' : '4px'};
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 10px ${ingredient.color}40;
+        `;
+        stack.appendChild(layer);
+      });
+    }
+    
+    function renderIngredients() {
+      const grid = document.getElementById('ingredients-grid');
+      grid.innerHTML = '';
+      
+      INGREDIENTS.forEach(ingredient => {
+        const btn = document.createElement('button');
+        btn.className = 'ingredient-btn bg-neon-gray border-2 rounded-xl p-2 sm:p-3 flex flex-col items-center gap-1 hover:border-neon-cyan';
+        btn.style.borderColor = ingredient.color + '60';
+        btn.onclick = () => addIngredient(ingredient.id);
+        
+        btn.innerHTML = `
+          <span class="text-xl sm:text-2xl">${ingredient.emoji}</span>
+          <span class="text-xs font-bold" style="color: ${ingredient.color}">${ingredient.name}</span>
+        `;
+        
+        grid.appendChild(btn);
+      });
+    }
+    
+    function renderTicket() {
+      const list = document.getElementById('ticket-list');
+      list.innerHTML = '';
+      
+      if (gameState.completedOrders.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 text-center">Nenhum ainda</p>';
+        return;
+      }
+      
+      gameState.completedOrders.forEach(order => {
+        const item = document.createElement('div');
+        item.className = `flex items-center gap-2 py-1 px-2 rounded ${order.success ? 'bg-green-500/20' : 'bg-red-500/20'}`;
+        item.innerHTML = `
+          <span>${order.success ? '✅' : '❌'}</span>
+          <span class="text-white">${order.name}</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+    
+    function showFeedback(message, isSuccess) {
+      const feedback = document.getElementById('feedback-message');
+      feedback.textContent = message;
+      feedback.style.opacity = '1';
+      
+      if (isSuccess === true) {
+        feedback.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg text-neon-cyan text-glow-cyan whitespace-nowrap transition-opacity';
+      } else if (isSuccess === false) {
+        feedback.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg text-red-500 whitespace-nowrap transition-opacity';
+      } else {
+        feedback.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg text-neon-yellow text-glow-yellow whitespace-nowrap transition-opacity';
+      }
+      
+      setTimeout(() => {
+        feedback.style.opacity = '0';
+      }, 1500);
+    }
+    
+    // ========================================
+    // INICIALIZAÇÃO
+    // ========================================
+    
+    // Fechar modal ao clicar fora
+    document.getElementById('modal-overlay').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-overlay') {
+        hideModal();
+      }
+    });
+    
+    // Inicializar som toggle visual
+    if (gameState.soundEnabled) {
+      document.getElementById('sound-knob').style.left = '1.75rem';
+    }
+    
+    // Iniciar SDKs
+    initSDKs();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf7e66f200dd072',t:'MTc3MTM1ODczMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
