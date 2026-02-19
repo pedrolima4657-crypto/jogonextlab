@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" class="h-full">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fila do Burger — Jogo de Espera</title>
@@ -108,255 +108,127 @@
       background-size: 40px 40px;
     }
   </style>
-</head>
-<body class="h-full bg-neon-dark font-body text-white overflow-auto">
-  <div id="app" class="min-h-full w-full circuit-pattern noise-bg flex flex-col">
-    
-    <!-- TELA INICIAL -->
-    <div id="menu-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
-      <!-- Logo SVG -->
-      <div class="mb-6 bounce-in">
-        <svg width="120" height="120" viewBox="0 0 120 120" class="drop-shadow-2xl">
-          <!-- Burger base -->
-          <ellipse cx="60" cy="95" rx="45" ry="12" fill="#8B4513" class="opacity-80"/>
-          <!-- Bottom bun -->
-          <path d="M15 85 Q15 75 60 75 Q105 75 105 85 L105 90 Q105 95 60 95 Q15 95 15 90 Z" fill="#D4A574"/>
-          <path d="M20 82 Q20 78 60 78 Q100 78 100 82" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6"/>
-          <!-- Lettuce -->
-          <path d="M12 75 Q30 65 60 70 Q90 65 108 75 Q90 72 60 77 Q30 72 12 75" fill="#22D3EE"/>
-          <!-- Cheese -->
-          <path d="M10 70 L20 60 L40 65 L60 58 L80 65 L100 60 L110 70 Q60 75 10 70" fill="#FACC15"/>
-          <!-- Patty -->
-          <ellipse cx="60" cy="55" rx="42" ry="10" fill="#5D3A1A"/>
-          <ellipse cx="60" cy="53" rx="40" ry="8" fill="#8B4513"/>
-          <!-- Top bun -->
-          <path d="M20 50 Q20 20 60 15 Q100 20 100 50 Q100 55 60 55 Q20 55 20 50" fill="#D4A574"/>
-          <path d="M25 45 Q25 25 60 20 Q95 25 95 45" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6"/>
-          <!-- Sesame seeds -->
-          <ellipse cx="40" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(-15 40 30)"/>
-          <ellipse cx="60" cy="25" rx="4" ry="2" fill="#FFF8DC"/>
-          <ellipse cx="80" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(15 80 30)"/>
-          <ellipse cx="50" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(-10 50 38)"/>
-          <ellipse cx="70" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(10 70 38)"/>
-          <!-- Neon glow effect -->
-          <ellipse cx="60" cy="55" rx="48" ry="45" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.3"/>
-        </svg>
-      </div>
-      
-      <h1 id="brand-title" class="font-display text-3xl sm:text-5xl font-black text-neon-purple text-glow-purple text-center mb-2">
-        NeonBurger Lab
-      </h1>
-      <p id="brand-tagline" class="text-neon-cyan text-lg sm:text-xl mb-8 text-center text-glow-cyan">
-        Jogue enquanto seu pedido chega!
-      </p>
-      
-      <div class="flex flex-col gap-4 w-full max-w-xs">
-        <button onclick="startGame()" class="gradient-border">
-          <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-xl text-neon-yellow hover:bg-neon-gray transition-all flex items-center justify-center gap-3">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-            JOGAR
-          </div>
-        </button>
-        
-        <button onclick="showModal('how-to-play')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
-          COMO JOGAR
-        </button>
-        
-        <button onclick="showModal('settings')" class="bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 px-6 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all">
-          CONFIGURAÇÕES
-        </button>
-      </div>
-      
-      <div class="mt-8 text-center">
-        <p class="text-gray-500 text-sm">Recorde: <span id="menu-high-score" class="text-neon-yellow font-bold">0</span> pontos</p>
-      </div>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-neon-dark font-body text-white overflow-auto">
+  <div id="app" class="min-h-full w-full circuit-pattern noise-bg flex flex-col"><!-- TELA INICIAL -->
+   <div id="menu-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-8"><!-- Logo SVG -->
+    <div class="mb-6 bounce-in">
+     <svg width="120" height="120" viewbox="0 0 120 120" class="drop-shadow-2xl"><!-- Burger base --> <ellipse cx="60" cy="95" rx="45" ry="12" fill="#8B4513" class="opacity-80" /> <!-- Bottom bun --> <path d="M15 85 Q15 75 60 75 Q105 75 105 85 L105 90 Q105 95 60 95 Q15 95 15 90 Z" fill="#D4A574" /> <path d="M20 82 Q20 78 60 78 Q100 78 100 82" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6" /> <!-- Lettuce --> <path d="M12 75 Q30 65 60 70 Q90 65 108 75 Q90 72 60 77 Q30 72 12 75" fill="#22D3EE" /> <!-- Cheese --> <path d="M10 70 L20 60 L40 65 L60 58 L80 65 L100 60 L110 70 Q60 75 10 70" fill="#FACC15" /> <!-- Patty --> <ellipse cx="60" cy="55" rx="42" ry="10" fill="#5D3A1A" /> <ellipse cx="60" cy="53" rx="40" ry="8" fill="#8B4513" /> <!-- Top bun --> <path d="M20 50 Q20 20 60 15 Q100 20 100 50 Q100 55 60 55 Q20 55 20 50" fill="#D4A574" /> <path d="M25 45 Q25 25 60 20 Q95 25 95 45" stroke="#A855F7" stroke-width="2" fill="none" opacity="0.6" /> <!-- Sesame seeds --> <ellipse cx="40" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(-15 40 30)" /> <ellipse cx="60" cy="25" rx="4" ry="2" fill="#FFF8DC" /> <ellipse cx="80" cy="30" rx="4" ry="2" fill="#FFF8DC" transform="rotate(15 80 30)" /> <ellipse cx="50" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(-10 50 38)" /> <ellipse cx="70" cy="38" rx="3" ry="1.5" fill="#FFF8DC" transform="rotate(10 70 38)" /> <!-- Neon glow effect --> <ellipse cx="60" cy="55" rx="48" ry="45" fill="none" stroke="#A855F7" stroke-width="1" opacity="0.3" />
+     </svg>
     </div>
-    
-    <!-- TELA DO JOGO -->
-    <div id="game-screen" class="hidden flex-1 flex flex-col p-2 sm:p-4">
-      <!-- Header do jogo -->
-      <div class="flex justify-between items-center mb-3">
-        <div class="flex items-center gap-2">
-          <span class="font-display text-neon-purple text-sm sm:text-base">⏱️</span>
-          <span id="time-display" class="font-display text-xl sm:text-2xl text-neon-cyan font-bold">60</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="font-display text-neon-yellow text-sm sm:text-base">🏆</span>
-          <span id="score-display" class="font-display text-xl sm:text-2xl text-neon-yellow font-bold">0</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-neon-pink text-sm">🔥</span>
-          <span id="combo-display" class="font-display text-lg text-neon-pink font-bold">x0</span>
-        </div>
-      </div>
-      
-      <!-- Barra de tempo -->
-      <div class="w-full h-3 bg-neon-gray rounded-full overflow-hidden mb-4 border border-neon-purple/30">
-        <div id="time-bar" class="h-full bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-yellow time-bar rounded-full" style="width: 100%"></div>
-      </div>
-      
-      <!-- Pedido atual -->
-      <div class="gradient-border mb-4">
-        <div class="bg-neon-dark rounded-xl p-3 sm:p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-neon-yellow">📋</span>
-            <span class="font-display text-neon-yellow text-sm sm:text-base font-bold">PEDIDO:</span>
-          </div>
-          <p id="current-order" class="font-display text-white text-sm sm:text-lg text-center"></p>
-        </div>
-      </div>
-      
-      <!-- Área do burger montado -->
-      <div class="flex-1 flex items-center justify-center mb-4 min-h-[120px] sm:min-h-[180px]">
-        <div class="relative">
-          <div id="burger-stack" class="flex flex-col-reverse items-center gap-1">
-            <!-- Camadas do burger aparecem aqui -->
-          </div>
-          <div id="feedback-message" class="absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg opacity-0 transition-opacity whitespace-nowrap"></div>
-        </div>
-      </div>
-      
-      <!-- Ingredientes -->
-      <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
-        <!-- Ingredientes serão gerados dinamicamente -->
-      </div>
-      <div id="ingredients-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4"></div>
-      
-      <!-- Botões de ação -->
-      <div class="flex gap-2 justify-center flex-wrap">
-        <button onclick="undoLayer()" class="bg-neon-gray border border-neon-purple/50 rounded-lg py-2 px-3 sm:px-4 text-neon-purple text-xs sm:text-sm font-bold hover:bg-neon-purple hover:text-neon-dark transition-all flex items-center gap-1">
-          ↩️ Desfazer
-        </button>
-        <button onclick="clearBurger()" class="bg-neon-gray border border-neon-pink/50 rounded-lg py-2 px-3 sm:px-4 text-neon-pink text-xs sm:text-sm font-bold hover:bg-neon-pink hover:text-neon-dark transition-all flex items-center gap-1">
-          🗑️ Limpar
-        </button>
-        <button onclick="deliverOrder()" class="bg-neon-yellow text-neon-dark rounded-lg py-2 px-4 sm:px-6 text-sm sm:text-base font-display font-bold hover:glow-yellow transition-all flex items-center gap-1">
-          ✅ Entregar!
-        </button>
-      </div>
+    <h1 id="brand-title" class="font-display text-3xl sm:text-5xl font-black text-neon-purple text-glow-purple text-center mb-2">NeonBurger Lab</h1>
+    <p id="brand-tagline" class="text-neon-cyan text-lg sm:text-xl mb-8 text-center text-glow-cyan">Jogue enquanto seu pedido chega!</p>
+    <div class="flex flex-col gap-4 w-full max-w-xs"><button onclick="startGame()" class="gradient-border">
+      <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-xl text-neon-yellow hover:bg-neon-gray transition-all flex items-center justify-center gap-3">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" />
+       </svg> JOGAR
+      </div></button> <button onclick="showModal('how-to-play')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all"> COMO JOGAR </button> <button onclick="showModal('settings')" class="bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 px-6 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all"> CONFIGURAÇÕES </button>
     </div>
-    
-    <!-- Ticket lateral (pedidos concluídos) -->
-    <div id="ticket-panel" class="hidden fixed right-2 top-1/2 transform -translate-y-1/2 w-32 sm:w-40 bg-neon-gray/95 rounded-l-xl border-l-4 border-neon-cyan p-2 sm:p-3 z-10">
-      <p class="font-display text-neon-cyan text-xs sm:text-sm font-bold mb-2">📝 ÚLTIMOS:</p>
-      <div id="ticket-list" class="space-y-1 text-xs"></div>
+    <div class="mt-8 text-center">
+     <p class="text-gray-500 text-sm">Recorde: <span id="menu-high-score" class="text-neon-yellow font-bold">0</span> pontos</p>
     </div>
-    
-    <!-- TELA DE RESULTADO -->
-    <div id="result-screen" class="hidden flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
-      <div class="gradient-border mb-6 bounce-in">
-        <div class="bg-neon-dark rounded-2xl p-6 sm:p-8 text-center">
-          <h2 class="font-display text-2xl sm:text-4xl text-neon-yellow text-glow-yellow mb-4">⏰ TEMPO!</h2>
-          
-          <div class="mb-6">
-            <p class="text-gray-400 text-sm mb-1">Sua pontuação:</p>
-            <p id="final-score" class="font-display text-4xl sm:text-6xl text-neon-cyan font-black text-glow-cyan">0</p>
-          </div>
-          
-          <div class="mb-6">
-            <p class="text-gray-400 text-sm mb-1">Recorde:</p>
-            <p id="final-high-score" class="font-display text-2xl sm:text-3xl text-neon-yellow font-bold">0</p>
-          </div>
-          
-          <div id="new-record" class="hidden mb-4 text-neon-pink font-display text-lg animate-pulse">
-            🎉 NOVO RECORDE! 🎉
-          </div>
-          
-          <p id="result-message" class="text-white text-sm sm:text-base mb-6"></p>
-        </div>
+   </div><!-- TELA DO JOGO -->
+   <div id="game-screen" class="hidden flex-1 flex flex-col p-2 sm:p-4"><!-- Header do jogo -->
+    <div class="flex justify-between items-center mb-3">
+     <div class="flex items-center gap-2"><span class="font-display text-neon-purple text-sm sm:text-base">⏱️</span> <span id="time-display" class="font-display text-xl sm:text-2xl text-neon-cyan font-bold">60</span>
+     </div>
+     <div class="flex items-center gap-2"><span class="font-display text-neon-yellow text-sm sm:text-base">🏆</span> <span id="score-display" class="font-display text-xl sm:text-2xl text-neon-yellow font-bold">0</span>
+     </div>
+     <div class="flex items-center gap-2"><span class="text-neon-pink text-sm">🔥</span> <span id="combo-display" class="font-display text-lg text-neon-pink font-bold">x0</span>
+     </div>
+    </div><!-- Barra de tempo -->
+    <div class="w-full h-3 bg-neon-gray rounded-full overflow-hidden mb-4 border border-neon-purple/30">
+     <div id="time-bar" class="h-full bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-yellow time-bar rounded-full" style="width: 100%"></div>
+    </div><!-- Pedido atual -->
+    <div class="gradient-border mb-4">
+     <div class="bg-neon-dark rounded-xl p-3 sm:p-4">
+      <div class="flex items-center gap-2 mb-2"><span class="text-neon-yellow">📋</span> <span class="font-display text-neon-yellow text-sm sm:text-base font-bold">PEDIDO:</span>
       </div>
-      
-      <div class="flex flex-col gap-3 w-full max-w-xs">
-        <button onclick="startGame()" class="gradient-border">
-          <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-lg text-neon-yellow hover:bg-neon-gray transition-all">
-            🔄 JOGAR DE NOVO
-          </div>
-        </button>
-        <button onclick="showScreen('menu')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
-          🏠 MENU
-        </button>
+      <p id="current-order" class="font-display text-white text-sm sm:text-lg text-center"></p>
+     </div>
+    </div><!-- Área do burger montado -->
+    <div class="flex-1 flex items-center justify-center mb-4 min-h-[120px] sm:min-h-[180px]">
+     <div class="relative">
+      <div id="burger-stack" class="flex flex-col-reverse items-center gap-1"><!-- Camadas do burger aparecem aqui -->
       </div>
+      <div id="feedback-message" class="absolute -top-8 left-1/2 transform -translate-x-1/2 font-display font-bold text-sm sm:text-lg opacity-0 transition-opacity whitespace-nowrap"></div>
+     </div>
+    </div><!-- Ingredientes -->
+    <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4"><!-- Ingredientes serão gerados dinamicamente -->
     </div>
-    
-    <!-- MODAIS -->
-    <div id="modal-overlay" class="hidden fixed inset-0 bg-black/80 modal-overlay z-50 flex items-center justify-center p-4">
-      <!-- Modal Como Jogar -->
-      <div id="how-to-play-modal" class="hidden gradient-border max-w-md w-full slide-up">
-        <div class="bg-neon-dark rounded-2xl p-6">
-          <h3 class="font-display text-2xl text-neon-cyan text-glow-cyan mb-4 text-center">🎮 COMO JOGAR</h3>
-          
-          <div class="space-y-4">
-            <div class="flex items-start gap-3">
-              <span class="bg-neon-purple text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">1</span>
-              <p class="text-gray-300 text-sm">Veja o <span class="text-neon-yellow font-bold">PEDIDO</span> no topo da tela com os ingredientes necessários.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <span class="bg-neon-cyan text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">2</span>
-              <p class="text-gray-300 text-sm">Clique nos <span class="text-neon-cyan font-bold">INGREDIENTES</span> na ordem correta para montar o burger.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <span class="bg-neon-yellow text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">3</span>
-              <p class="text-gray-300 text-sm">Clique em <span class="text-neon-yellow font-bold">ENTREGAR</span> quando terminar. Acertos dão +100 pontos!</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <span class="bg-neon-pink text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">4</span>
-              <p class="text-gray-300 text-sm">Monte <span class="text-neon-pink font-bold">COMBOS</span> de 3+ acertos seguidos para bônus de +150!</p>
-            </div>
-          </div>
-          
-          <button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all">
-            ENTENDI! 👍
-          </button>
-        </div>
-      </div>
-      
-      <!-- Modal Configurações -->
-      <div id="settings-modal" class="hidden gradient-border max-w-md w-full slide-up">
-        <div class="bg-neon-dark rounded-2xl p-6">
-          <h3 class="font-display text-2xl text-neon-purple text-glow-purple mb-6 text-center">⚙️ CONFIGURAÇÕES</h3>
-          
-          <div class="space-y-6">
-            <!-- Som -->
-            <div class="flex items-center justify-between">
-              <span class="text-white font-bold">🔊 Som</span>
-              <button id="sound-toggle" onclick="toggleSound()" class="w-16 h-8 rounded-full bg-neon-gray border-2 border-neon-cyan relative transition-all">
-                <div id="sound-knob" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-neon-cyan transition-all"></div>
-              </button>
-            </div>
-            
-            <!-- Dificuldade -->
-            <div>
-              <p class="text-white font-bold mb-3">🎯 Dificuldade</p>
-              <div class="grid grid-cols-3 gap-2">
-                <button onclick="setDifficulty('easy')" id="diff-easy" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-cyan text-neon-dark">
-                  FÁCIL
-                </button>
-                <button onclick="setDifficulty('normal')" id="diff-normal" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-yellow border border-neon-yellow/50">
-                  NORMAL
-                </button>
-                <button onclick="setDifficulty('hard')" id="diff-hard" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-pink border border-neon-pink/50">
-                  DIFÍCIL
-                </button>
-              </div>
-              <p id="difficulty-desc" class="text-gray-500 text-xs mt-2 text-center">3 ingredientes • Sem penalidade de tempo</p>
-            </div>
-          </div>
-          
-          <button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-purple rounded-xl py-3 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all">
-            SALVAR ✓
-          </button>
-        </div>
-      </div>
+    <div id="ingredients-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4"></div><!-- Botões de ação -->
+    <div class="flex gap-2 justify-center flex-wrap"><button onclick="undoLayer()" class="bg-neon-gray border border-neon-purple/50 rounded-lg py-2 px-3 sm:px-4 text-neon-purple text-xs sm:text-sm font-bold hover:bg-neon-purple hover:text-neon-dark transition-all flex items-center gap-1"> ↩️ Desfazer </button> <button onclick="clearBurger()" class="bg-neon-gray border border-neon-pink/50 rounded-lg py-2 px-3 sm:px-4 text-neon-pink text-xs sm:text-sm font-bold hover:bg-neon-pink hover:text-neon-dark transition-all flex items-center gap-1"> 🗑️ Limpar </button> <button onclick="deliverOrder()" class="bg-neon-yellow text-neon-dark rounded-lg py-2 px-4 sm:px-6 text-sm sm:text-base font-display font-bold hover:glow-yellow transition-all flex items-center gap-1"> ✅ Entregar! </button>
     </div>
-    
-    <!-- Rodapé -->
-    <footer class="text-center py-4 text-gray-600 text-xs border-t border-neon-gray/50">
-      <span id="footer-brand">NeonBurger Lab</span> • Pedido fictício • Jogo de espera
-    </footer>
+   </div><!-- Ticket (pedidos concluídos) - Rodapé em mobile, lateral em desktop -->
+   <div id="ticket-panel" class="hidden sm:fixed sm:right-2 sm:top-1/2 sm:transform sm:-translate-y-1/2 w-full sm:w-40 bg-neon-gray/95 sm:rounded-l-xl rounded-t-xl border-t-4 sm:border-l-4 border-neon-cyan p-2 sm:p-3 z-10">
+    <p class="font-display text-neon-cyan text-xs sm:text-sm font-bold mb-2">📝 ÚLTIMOS:</p>
+    <div id="ticket-list" class="space-y-1 text-xs flex sm:flex-col gap-2 sm:gap-0 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0"></div>
+   </div><!-- TELA DE RESULTADO -->
+   <div id="result-screen" class="hidden flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+    <div class="gradient-border mb-6 bounce-in">
+     <div class="bg-neon-dark rounded-2xl p-6 sm:p-8 text-center">
+      <h2 class="font-display text-2xl sm:text-4xl text-neon-yellow text-glow-yellow mb-4">⏰ TEMPO!</h2>
+      <div class="mb-6">
+       <p class="text-gray-400 text-sm mb-1">Sua pontuação:</p>
+       <p id="final-score" class="font-display text-4xl sm:text-6xl text-neon-cyan font-black text-glow-cyan">0</p>
+      </div>
+      <div class="mb-6">
+       <p class="text-gray-400 text-sm mb-1">Recorde:</p>
+       <p id="final-high-score" class="font-display text-2xl sm:text-3xl text-neon-yellow font-bold">0</p>
+      </div>
+      <div id="new-record" class="hidden mb-4 text-neon-pink font-display text-lg animate-pulse">
+       🎉 NOVO RECORDE! 🎉
+      </div>
+      <p id="result-message" class="text-white text-sm sm:text-base mb-6"></p>
+     </div>
+    </div>
+    <div class="flex flex-col gap-3 w-full max-w-xs"><button onclick="startGame()" class="gradient-border">
+      <div class="bg-neon-dark rounded-xl py-4 px-8 font-display font-bold text-lg text-neon-yellow hover:bg-neon-gray transition-all">
+       🔄 JOGAR DE NOVO
+      </div></button> <button onclick="showScreen('menu')" class="bg-neon-gray border-2 border-neon-purple rounded-xl py-3 px-6 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all"> 🏠 MENU </button>
+    </div>
+   </div><!-- MODAIS -->
+   <div id="modal-overlay" class="hidden fixed inset-0 bg-black/80 modal-overlay z-50 flex items-center justify-center p-4"><!-- Modal Como Jogar -->
+    <div id="how-to-play-modal" class="hidden gradient-border max-w-md w-full slide-up">
+     <div class="bg-neon-dark rounded-2xl p-6">
+      <h3 class="font-display text-2xl text-neon-cyan text-glow-cyan mb-4 text-center">🎮 COMO JOGAR</h3>
+      <div class="space-y-4">
+       <div class="flex items-start gap-3"><span class="bg-neon-purple text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">1</span>
+        <p class="text-gray-300 text-sm">Veja o <span class="text-neon-yellow font-bold">PEDIDO</span> no topo da tela com os ingredientes necessários.</p>
+       </div>
+       <div class="flex items-start gap-3"><span class="bg-neon-cyan text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">2</span>
+        <p class="text-gray-300 text-sm">Clique nos <span class="text-neon-cyan font-bold">INGREDIENTES</span> na ordem correta para montar o burger.</p>
+       </div>
+       <div class="flex items-start gap-3"><span class="bg-neon-yellow text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">3</span>
+        <p class="text-gray-300 text-sm">Clique em <span class="text-neon-yellow font-bold">ENTREGAR</span> quando terminar. Acertos dão +100 pontos!</p>
+       </div>
+       <div class="flex items-start gap-3"><span class="bg-neon-pink text-neon-dark font-display font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shrink-0">4</span>
+        <p class="text-gray-300 text-sm">Monte <span class="text-neon-pink font-bold">COMBOS</span> de 3+ acertos seguidos para bônus de +150!</p>
+       </div>
+      </div><button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-cyan rounded-xl py-3 font-display font-bold text-neon-cyan hover:bg-neon-cyan hover:text-neon-dark transition-all"> ENTENDI! 👍 </button>
+     </div>
+    </div><!-- Modal Configurações -->
+    <div id="settings-modal" class="hidden gradient-border max-w-md w-full slide-up">
+     <div class="bg-neon-dark rounded-2xl p-6">
+      <h3 class="font-display text-2xl text-neon-purple text-glow-purple mb-6 text-center">⚙️ CONFIGURAÇÕES</h3>
+      <div class="space-y-6"><!-- Som -->
+       <div class="flex items-center justify-between"><span class="text-white font-bold">🔊 Som</span> <button id="sound-toggle" onclick="toggleSound()" class="w-16 h-8 rounded-full bg-neon-gray border-2 border-neon-cyan relative transition-all">
+         <div id="sound-knob" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-neon-cyan transition-all"></div></button>
+       </div><!-- Dificuldade -->
+       <div>
+        <p class="text-white font-bold mb-3">🎯 Dificuldade</p>
+        <div class="grid grid-cols-3 gap-2"><button onclick="setDifficulty('easy')" id="diff-easy" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-cyan text-neon-dark"> FÁCIL </button> <button onclick="setDifficulty('normal')" id="diff-normal" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-yellow border border-neon-yellow/50"> NORMAL </button> <button onclick="setDifficulty('hard')" id="diff-hard" class="py-2 px-3 rounded-lg font-display text-sm font-bold transition-all bg-neon-gray text-neon-pink border border-neon-pink/50"> DIFÍCIL </button>
+        </div>
+        <p id="difficulty-desc" class="text-gray-500 text-xs mt-2 text-center">3 ingredientes • Sem penalidade de tempo</p>
+       </div>
+      </div><button onclick="hideModal()" class="w-full mt-6 bg-neon-gray border-2 border-neon-purple rounded-xl py-3 font-display font-bold text-neon-purple hover:bg-neon-purple hover:text-neon-dark transition-all"> SALVAR ✓ </button>
+     </div>
+    </div>
+   </div><!-- Rodapé -->
+   <footer class="text-center py-4 text-gray-600 text-xs border-t border-neon-gray/50"><span id="footer-brand">NeonBurger Lab</span> • Pedido fictício • Jogo de espera
+   </footer>
   </div>
-
   <script>
     // ========================================
     // CONFIGURAÇÃO E ESTADO DO JOGO
@@ -996,5 +868,5 @@
     // Iniciar SDKs
     initSDKs();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf7e66f200dd072',t:'MTc3MTM1ODczMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d07fcb3a5fed06d',t:'MTc3MTUyNzQxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
